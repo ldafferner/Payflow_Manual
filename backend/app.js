@@ -28,11 +28,11 @@ async function publishTransaction(amount) {
 }
 
 app.get('/', (req, res) => {
-  res.send('PayFlow API v2 🚀');
+  res.send('PayFlow API v3 🚀');
 });
 
 app.get('/api', (req, res) => {
-  res.send('PayFlow API v2 🚀');
+  res.send('PayFlow API v3 🚀');
 });
 
 app.post('/api/transaction', async (req, res) => {
