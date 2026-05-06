@@ -7,6 +7,8 @@ steps:
       - build
       - -t
       - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-backend:$SHORT_SHA
+      - -f
+      - backend/Dockerfile
       - ./backend
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -22,8 +24,10 @@ steps:
       - build
       - -t
       - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-frontend:$SHORT_SHA
-      - ./frontend
-
+      - -f
+      - frontend/Dockerfile
+      - frontend
+      
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
@@ -37,6 +41,8 @@ steps:
       - build
       - -t
       - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-worker:$SHORT_SHA
+      - -f
+      - worker/Dockerfile
       - ./worker
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -74,3 +80,6 @@ images:
   - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-backend:$SHORT_SHA
   - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-frontend:$SHORT_SHA
   - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-worker:$SHORT_SHA
+
+options:
+  logging: CLOUD_LOGGING_ONLY
