@@ -1,0 +1,76 @@
+steps:
+  # ----------------------------
+  # Build backend
+  # ----------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-backend:$SHORT_SHA
+      - ./backend
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-backend:$SHORT_SHA
+
+  # ----------------------------
+  # Build frontend
+  # ----------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-frontend:$SHORT_SHA
+      - ./frontend
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-frontend:$SHORT_SHA
+
+  # ----------------------------
+  # Build worker
+  # ----------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-worker:$SHORT_SHA
+      - ./worker
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-worker:$SHORT_SHA
+
+  # ----------------------------
+  # Substitui imagens nos manifests
+  # ----------------------------
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        sed -i "s|BACKEND_IMAGE|us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-backend:$SHORT_SHA|g" k8s/backend-deployment.yaml
+
+        sed -i "s|FRONTEND_IMAGE|us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-frontend:$SHORT_SHA|g" k8s/frontend-deployment.yaml
+
+        sed -i "s|WORKER_IMAGE|us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-worker:$SHORT_SHA|g" k8s/worker.yaml
+
+  # ----------------------------
+  # Deploy no cluster
+  # ----------------------------
+  - name: 'gcr.io/cloud-builders/kubectl'
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=us-central1
+      - CLOUDSDK_CONTAINER_CLUSTER=cluster-1
+    args:
+      - apply
+      - -f
+      - k8s/
+
+images:
+  - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-backend:$SHORT_SHA
+  - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-frontend:$SHORT_SHA
+  - us-central1-docker.pkg.dev/gkeleodaf/my-docker-repo/payflow-worker:$SHORT_SHA

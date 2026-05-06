@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payflow-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payflow-worker
+  template:
+    metadata:
+      labels:
+        app: payflow-worker
+    spec:
+      containers:
+      - name: worker
+        image: WORKER_IMAGE

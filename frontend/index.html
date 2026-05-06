@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>PayFlow</title></head>
+<body>
+  <h1>PayFlow </h1>
+  <button onclick="callApi()">Testar API</button>
+  <p id="result"></p>
+
+  <script>
+    function callApi() {
+      fetch('/api')
+        .then(res => res.text())
+        .then(data => document.getElementById('result').innerText = data)
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payflow-backend-config
+data:
+  DB_HOST: postgres
+  DB_NAME: payflow
+  DB_PORT: "5432"
